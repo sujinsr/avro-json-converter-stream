@@ -19,7 +19,7 @@ public class AvroJsonStream {
 
     public static void main(String []args) throws InterruptedException {
         if (args.length < 3) {
-            System.out.println("Error expected more arguments to the program...");
+            System.out.println("Error expected more arguments for the program...");
             return;
         }
         String bootStrapServer = args[0];
