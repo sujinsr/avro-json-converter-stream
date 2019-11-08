@@ -1,6 +1,8 @@
 package com.github.sujinsr.kafka.avro;
 
 
+import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -58,8 +60,8 @@ public class AvroJsonStream {
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "avro_json_stream_application_" + topic);
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-        //props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, GenericAvroSerde.class);
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, GenericAvroSerde.class);
+        //props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
         props.put("schema.registry.url", schemRegistry);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -69,8 +71,8 @@ public class AvroJsonStream {
     private StreamsBuilder createTopology(String topic) {
         String sinkTopic = topic + "_json_converted";
         StreamsBuilder builder = new StreamsBuilder();
-        //KStream<String, GenericRecord> firstStream = builder.stream(topic);
-        KStream<String, String> firstStream = builder.stream(topic);
+        KStream<String, GenericRecord> firstStream = builder.stream(topic);
+        //KStream<String, String> firstStream = builder.stream(topic);
         final Serde<String> stringSerde = Serdes.String();
         firstStream.mapValues(record -> record.toString())
                 .to(sinkTopic, Produced.valueSerde(stringSerde));
